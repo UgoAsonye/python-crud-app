@@ -47,3 +47,26 @@ def initial_setup():
 
 if __name__ == "__main__":
     initial_setup()
+
+
+def photos_all():
+    conn = connect_to_db()
+    rows = conn.execute(
+        """
+        SELECT * FROM photos
+        """
+    ).fetchall()
+    return [dict(row) for row in rows]
+
+def photos_create(name, width, height):
+    conn = connect_to_db()
+    row = conn.execute(
+        """
+        INSERT INTO photos (name, width, height)
+        VALUES (?, ?, ?)
+        RETURNING *
+        """,
+        (name, width, height),
+    ).fetchone()
+    conn.commit()
+    return dict(row)
